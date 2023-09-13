@@ -1,2 +1,12 @@
 # Notes
-Notes for all the courses
+
+
+INFO 5100
+
+INFO 6105
+
+INFO 6150
+
+INFO 6250
+
+INFO 7374
