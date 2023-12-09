@@ -29,6 +29,13 @@ function reducer(state, action) {
         isUsersPending: false,
       };
 
+    case ACTIONS.START_LOADING_PAGE:
+      return {
+        ...state,
+        error:'',
+        loginStatus: LOGIN_STATUS.IS_LOGGED_IN,
+      };
+
     case ACTIONS.LOG_OUT:
       return {
         ...state,

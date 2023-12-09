@@ -52,16 +52,17 @@ function App() {
     
 
     function onLogin( username ) {
-        fetchLogin(username)
-        .then( () => {
-            dispatch({ type: ACTIONS.LOG_IN, username });
-            dispatch({ type: ACTIONS.REPORT_SUCCESS, success: "Logged in successfully!" });
-            setPage("home");
-            return fetchUsers();
-        })
-        .catch( err => {
-            dispatch({ type: ACTIONS.REPORT_ERROR, error: err?.error })
-        });
+      dispatch({type: ACTIONS.START_LOADING_PAGE})
+      fetchLogin(username)
+      .then( () => {
+          dispatch({ type: ACTIONS.LOG_IN, username });
+          dispatch({ type: ACTIONS.REPORT_SUCCESS, success: "Logged in successfully!" });
+          setPage("home");
+          return fetchUsers();
+      })
+      .catch( err => {
+          dispatch({ type: ACTIONS.REPORT_ERROR, error: err?.error })
+      });
     }
 
     function onLogout() {
@@ -91,7 +92,7 @@ function App() {
     
   return (
     <div className={`app ${state.darkTheme ? "dark": ""}`}>
-      { state.error && <Status error={state.error}/> }
+      {state.error && <state error={state.error}/> }
       {state.loginStatus === LOGIN_STATUS.PENDING && <Loader />}
       {state.loginStatus === LOGIN_STATUS.NOT_LOGGED_IN && <Login onLogin={onLogin} />}
       {state.loginStatus === LOGIN_STATUS.IS_LOGGED_IN && (

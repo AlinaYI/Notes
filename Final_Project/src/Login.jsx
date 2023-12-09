@@ -1,14 +1,8 @@
 import { useState } from 'react';
 import './Form.css';
 
-// The "onLogin" below is not an automatic event
-// such events only happen on JSX representing native HTML elements
-// Here it just a prop name like any other
 function LoginForm({ onLogin }) {
-  // This state is local to this component
-  // it is used only inside this component
-  // until login is complete
-  // when we call the passed action function
+
   const [username, setUsername] = useState('');
 
   function onChange(e) {
@@ -16,10 +10,9 @@ function LoginForm({ onLogin }) {
   }
 
   function onSubmit(e) {
-    e.preventDefault(); // Remember this! Can be very confusing if page reloads
-    if(username) {  // Don't allow blank username to try login
-      // We could enforce more requirements, but I'm keeping this simple
-      onLogin(username); // "action" function we were passed in
+    e.preventDefault(); 
+    if(username) {      
+      onLogin(username); 
     }
   }
 
@@ -35,7 +28,7 @@ function LoginForm({ onLogin }) {
                 className="username"
                 name="username"
                 value={username}
-                onInput={onChange}
+                onChange={onChange}
                 placeholder="Type your username here!"
               />
             </div>
