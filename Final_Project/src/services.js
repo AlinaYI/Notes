@@ -67,80 +67,49 @@ export function fetchAddMessage(username, message) {
 }
 
 export function fetchMessages() {
-  return fetch("/api/messages", {
-    method: "GET",
-  })
-  .catch(() => Promise.reject({ error: "networkError" }))
-  .then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return response.json()
-    .catch((error) => Promise.reject({ error }))
-    .then((err) => Promise.reject(err));
-  });
+  return fetch("/api/messages")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        console.error('Failed to parse JSON:', e);
+        return {};
+      }
+    })
+    .catch(error => {
+      console.error('Fetch messages error:', error);
+      return Promise.reject({ error: error.message });
+    });
 }
+
+
+
 
 export function fetchUsers() {
-  return fetch("/api/users", {
-    method: "GET",
-  })
-  .catch(() => Promise.reject({ error: "networkError" }))
-  .then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return response.json()
-    .catch((error) => Promise.reject({ error }))
-    .then((err) => Promise.reject(err));
-  });
+  return fetch("/api/users")
+    .catch(() => Promise.reject({ error: "networkError" }))
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return [];
+      }
+      return response.json().catch(() => {
+        throw new Error('Response was not valid JSON');
+      });
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      return Promise.reject({ error: error.message });
+    });
 }
-
-//////////////////////////////////////
-// export function fetchMessages() {
-//   return fetch('/api/chat')
-//       .catch(() => Promise.reject({ error: 'networkError' }))
-//       .then(response => {
-//           if (response.ok) {
-//               return response.json();
-//           }
-//           return response.json()
-//               .catch(error => Promise.reject({ error }))
-//               .then(err => Promise.reject(err));
-//       });
-// }
-
-// export function fetchSendMessage(message) {
-//   return fetch('/api/chat', {
-//       method: 'POST',
-//       headers: new Headers({
-//           'content-type': 'application/json',
-//       }),
-//       body: JSON.stringify({ message }),
-//   })
-//       .catch(() => Promise.reject({ error: 'networkError' }))
-//       .then(response => {
-//           if (response.ok) {
-//               return response.json();
-//           }
-//           return response.json()
-//               .catch(error => Promise.reject({ error }))
-//               .then(err => Promise.reject(err));
-//       });
-// }
-
-// export function fetchUserData() {
-//   return fetch('/api/user')
-//       .catch(() => Promise.reject({ error: 'networkError' }))
-//       .then(response => {
-//           if (response.ok) {
-//               return response.json();
-//           }
-//           return response.json()
-//               .catch(error => Promise.reject({ error }))
-//               .then(err => Promise.reject(err));
-//       });
-// }
 
 export function fetchChangeTheme() {
   return fetch('/api/user', {

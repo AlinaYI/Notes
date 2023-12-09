@@ -3,7 +3,7 @@ import compare from "./compare";
 import "./Form.css";
 
 
-function Game({setIsLoggedIn}) {
+function Game({setIsLoggedIn, darkTheme}) {
   const [word, setWord] = useState("");
   const [error, setError] = useState("");
   const [gameStat, setGameStat] = useState({class: '', message: ''});
@@ -41,12 +41,9 @@ function Game({setIsLoggedIn}) {
     }
   };
 
-  const logoutHandler = () => {
-    setIsLoggedIn(false);
-  };
 
   return (
-    <div className="game-container">
+    <div className={darkTheme ? "dark": ""}>
         <div className="form">
 
             <h1 className="title">Game Start</h1>

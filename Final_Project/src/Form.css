@@ -1,18 +1,15 @@
-html,body {
-    font-family: sans-serif;
-    background-color: papayawhip;
-}
-
 .form{
     width: 80%;
-    min-width: 600px;
-    margin: 64px auto;
+    margin: auto;
     border: 3px solid black;
     border-radius: 5px;
     padding: 32px;
     text-align: center;
     position: relative;
-    background-color: white;
+    background-color: #fff;
+    color: #000;
+    min-width: 100px;
+    min-height: 82vh;
 }
 
 .form form{

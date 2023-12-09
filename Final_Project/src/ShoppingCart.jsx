@@ -71,7 +71,8 @@ function ShoppingCart(){
         <div id="app">
             {viewCart ? (
                 <div className="cartlist">
-                    <h2>Shopping Cart</h2>
+                    <h2>Game Store</h2>
+                    <p>Browse and purchase your favorite games right here!</p>
                     <ul className="carts">
                         {products.map((product, index) => product.count > 0 && (
                             <li key={index} className="cart in-cart">

@@ -6,7 +6,7 @@ const app = express();
 // lets us run on a different port from the dev server from `npm start`
 const PORT = process.env.PORT || 3000;
 
-const chat = require("./chat");
+const data = require("./data");
 const sessions = require("./sessions");
 const user = require("./users");
 
@@ -64,22 +64,28 @@ app.delete("/api/session", (req, res) => {
 //messages
 app.get("/api/messages", (req, res) => {
   const sid = req.cookies.sid;
+  
   if (!sid || !sessions.isValidSessionId(sid)) {
     res.clearCookie("sid");
-    res.status(401).json({ error: 'auth-missing' });
-    return;
+    return res.status(401).json({ error: 'auth-missing' });
   }
 
-  const { username } = data.sessions[sid] || {};
-  const userData = sessions.findUser(username);
+  try {
+    const username = sessions.getSessionUser(sid);
 
-  if (userData.username) {
-    const { messagesList } = data;
-    res.json({ messagesList });
-  } else {
-    res.status(401).json({ error: 'auth-missing' });
+    if (!username) {
+      throw new Error('Session user not found');
+    }
+    
+    const messagesList = data.messagesList || {};
+    res.json({ messages: messagesList });
+  } catch (error) {
+    console.error('Failed to get messages:', error);
+    res.status(500).json({ error: 'internal-server-error' });
   }
 });
+
+
 
 app.post("/api/messages", (req, res) => {
   const sid = req.cookies.sid;
@@ -104,69 +110,27 @@ app.get("/api/users", (req, res) => {
   const sid = req.cookies.sid;
   if (!sid || !sessions.isValidSessionId(sid)) {
     res.clearCookie("sid");
+    console.error('Invalid session ID:', sid);
     res.status(401).json({ error: 'auth-missing' });
     return;
   }
 
-  const { username } = data.sessions[sid] || {};
-  const userData = sessions.findUser(username);
+  try {
+    const { username } = data.sessions[sid] || {};
+    const userData = sessions.findUser(username);
 
-  if (userData.username) {
-    const { users } = data;
-    res.json({ users });
-  } else {
-    res.status(401).json({ error: 'auth-missing' });
+    if (userData.username) {
+      const { users } = data;
+      res.json({ users });
+    } else {
+      res.status(401).json({ error: 'auth-missing' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'internal-server-error' });
   }
 });
 
-////////////////////////////////////////////////////////////////
-// app.get('/api/user', (req, res) => {
-//   const sid = req.cookies.sid;
-//   const username = sid ? sessions.getSessionUser(sid) : '';
-//   if (!sid || !username) {
-//       res.status(401).json({ error: 'auth-missing' });
-//       return;
-//   }
-//   res.json(user.getUserData(username));
-// });
 
-// app.patch('/api/user', (req, res) => {
-//   const sid = req.cookies.sid;
-//   const username = sid ? sessions.getSessionUser(sid) : '';
-//   if (!sid || !username) {
-//       res.status(401).json({ error: 'auth-missing' });
-//       return;
-//   }
-//   user.changeTheme(username);
-//   res.json({ username });
-// });
-
-
-// //chat
-// app.get('/api/chat', (req, res) => {
-//     const sid = req.cookies.sid;
-//     const username = sid ? sessions.getSessionUser(sid) : '';
-//     if (!sid || !username) {
-//         res.status(401).json({ error: 'auth-missing' });
-//         return;
-//     }
-//     res.json(chat.messages);
-// });
-
-// app.post('/api/chat', (req, res) => {
-//     const sid = req.cookies.sid;
-//     const username = sid ? sessions.getSessionUser(sid) : '';
-//     if (!sid || !username) {
-//         res.status(401).json({ error: 'auth-missing' });
-//         return;
-//     }
-//     const { message } = req.body;
-//     if (!message) {
-//         res.status(400).json({ error: 'required-task' });
-//         return;
-//     }
-//     chat.addMessage(username, message);
-//     res.json(chat.messages);
-// });
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));

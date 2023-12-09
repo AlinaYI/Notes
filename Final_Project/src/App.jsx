@@ -15,6 +15,7 @@ import {
 } from './services';
 
 import Login from './Login';
+import Home from './Home';
 import Navbar from "./Navbar";
 import Guess from "./Guess";
 import Chat from "./Chat";
@@ -46,41 +47,17 @@ function App() {
           }
           return Promise.reject(err);
         })
-        .then((users) => {
-          updateUsers(users.users);
-          render({ state, appEl });
-          waitOnMessages();
-          render({ state, appEl });
-          return fetchMessages();
-        })
-        .catch((err) => {
-          logout();
-          render({ state, appEl });
-        })
-        .then((messages) => {
-          const { messagesList } = messages;
-          updateMessages(messagesList);
-          render({ state, appEl });
-          const scrollDiv = document.querySelector(".messages");
-          scrollDiv.scrollTop = scrollDiv.scrollHeight;
-          const inputEl = document.querySelector(".to-send");
-          inputEl.focus();
-          setInterval(checkForMessages, 5000);
-        })
-        .catch((err) => {
-          if (err?.error == CLIENT.NO_SESSION) {
-            logout();
-            render({ state, appEl });
-            return;
-          }
-        });
     }
+
+    
 
     function onLogin( username ) {
         fetchLogin(username)
         .then( () => {
             dispatch({ type: ACTIONS.LOG_IN, username });
-            dispatch({ type: ACTIONS.SET_PAGE, page: "home" });
+            dispatch({ type: ACTIONS.REPORT_SUCCESS, success: "Logged in successfully!" });
+            setPage("home");
+            return fetchUsers();
         })
         .catch( err => {
             dispatch({ type: ACTIONS.REPORT_ERROR, error: err?.error })
@@ -100,31 +77,6 @@ function App() {
       dispatch({ type: ACTIONS.TOGGLE_MODE });
     };
 
-    function checkForMessages() {
-      fetchUsers()
-        .then((users) => {
-          updateUsers(users.users);
-          render({ state, appEl });
-          waitOnMessages();
-          return fetchMessages();
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .then((messages) => {
-          const { messagesList } = messages;
-          updateMessages(messagesList);
-          render({ state, appEl });
-          const scrollDiv = document.querySelector(".messages");
-          scrollDiv.scrollTop = scrollDiv.scrollHeight;
-          const inputEl = document.querySelector(".to-send");
-          inputEl.focus();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
     useEffect(
         () => {
           checkForSession();    
@@ -138,7 +90,7 @@ function App() {
     }, [page]);
     
   return (
-    <div className="app">
+    <div className={`app ${state.darkTheme ? "dark": ""}`}>
       { state.error && <Status error={state.error}/> }
       {state.loginStatus === LOGIN_STATUS.PENDING && <Loader />}
       {state.loginStatus === LOGIN_STATUS.NOT_LOGGED_IN && <Login onLogin={onLogin} />}
@@ -153,11 +105,8 @@ function App() {
       />
       <main className={`main-content ${state.darkTheme ? "dark" : ""}`}>
         {page === "home" && (
-            <>
-            <div className="home">
-              <h1>Welcome to the Game Center!</h1>
-            </div>
-            </>
+
+          <Home/>
         )}
 
         {page === "guess" && (

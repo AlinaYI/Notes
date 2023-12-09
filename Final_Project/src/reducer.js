@@ -9,9 +9,9 @@ export const initialState = {
   error: "",
   username: "",
   darkTheme: false,
-  loginStatus: LOGIN_STATUS.NOT_LOGGED_IN,
-  messages: {},
-  users: {},
+  loginStatus: LOGIN_STATUS.IS_LOGGED_IN,
+  messages: [],
+  users: [],
   isMessagePending: false,
   isUsersPending: false,
 };
@@ -35,8 +35,8 @@ function reducer(state, action) {
         error: '',
         loginStatus: LOGIN_STATUS.NOT_LOGGED_IN,
         username: '',
-        messages: {},
-        users: {},
+        messages: [],
+        users: [],
         };
 
     case ACTIONS.TOGGLE_MODE:
@@ -54,15 +54,13 @@ function reducer(state, action) {
     case ACTIONS.UPDATE_MESSAGES:
       return {
         ...state,
-        messages: action.messages,
-        isMessagePending: false,
+        messages: Array.isArray(action.messages) ? action.messages : []
       };
 
     case ACTIONS.UPDATE_USERS:
       return {
         ...state,
-        users: action.users,
-        isUsersPending: false,
+        users: Array.isArray(action.users) ? action.users : []
       };
 
     case ACTIONS.WAIT_ON_MESSAGES:
@@ -86,7 +84,7 @@ function reducer(state, action) {
       };
 
     default:
-      throw new Error({ error: CLIENT.UNKNOWN_ACTION, detail: action }); // reporting detail for debugging aid, not shown to user
+      return state;
   }
 }
 
