@@ -1,0 +1,45 @@
+.sender-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: burlywood;
+    color: #ffffff;
+    padding: 24px;
+    font-size: 26px;
+  }
+  .message-content {
+    margin-left: 16px;
+  }
+  .message-sender {
+    font-size: 14px;
+    color: #616161;
+    margin-bottom: 6px;
+  }
+  .send-bottom {
+    width: 100%;
+    margin: 16px 20px;
+  }
+  .chat-send-form {
+    display: flex;
+  }
+  .send-bottom form .to-send {
+    width: 80%;
+    font-size: 20px;
+    padding: 8px 16px;
+  }
+  
+  .send-btn {
+    padding: 15px 30px;
+    font-size: 22px;
+    background-color: burlywood;
+    color: white;
+    cursor: pointer;
+    margin-top: 24px;
+    border-radius: 20px;
+  }
+  .send-btn:hover {
+    background-color: #000103;
+  }
